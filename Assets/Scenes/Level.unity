@@ -1215,7 +1215,7 @@ MonoBehaviour:
   - {fileID: 1841307718}
   enemies:
   - {fileID: 6397083870827187516, guid: 39fd214f067be8043b948d51182b3dde, type: 3}
-  timeBetweenSpawns: 1.5
+  timeBetweenSpawns: 1
 --- !u!224 &1225022515 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 7429058598086987187, guid: 4523d9004fe85f54c9013dee0fc9c6c2, type: 3}

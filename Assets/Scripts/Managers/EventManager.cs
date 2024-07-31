@@ -6,12 +6,17 @@ using UnityEngine;
 public class EventManager : MonoBehaviour
 {
     public static event Action<GameObject> OnEnemyDefeated;
-
+    public static event Action OnLevelPassed;
 
 
 
     public static void EnemyDefeated(GameObject enemy)
     {
         OnEnemyDefeated?.Invoke(enemy);
+    }
+
+    public static void LevelPassed()
+    {
+        OnLevelPassed?.Invoke();
     }
 }
