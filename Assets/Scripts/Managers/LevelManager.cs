@@ -15,11 +15,13 @@ public class LevelManager : MonoBehaviour
     void OnEnable()
     {
         EventManager.OnLevelPassed += PassLevel;
+        EventManager.OnTogglePauseMenu += TogglePause;
     }
 
     void OnDisable()
     {
         EventManager.OnLevelPassed -= PassLevel;
+        EventManager.OnTogglePauseMenu -= TogglePause;
     }
 
     void Start()
@@ -32,7 +34,7 @@ public class LevelManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.P))
         {
-            TogglePause();
+            EventManager.TogglePauseMenu();
         }
         UpdateCountdownTime();
     }
