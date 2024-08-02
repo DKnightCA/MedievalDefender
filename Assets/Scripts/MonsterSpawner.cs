@@ -15,6 +15,7 @@ public class MonsterSpawner : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        EventManager.OnLevelPassed += Deactivate;
         spawnAllowed = true;
     }
 
@@ -43,5 +44,10 @@ public class MonsterSpawner : MonoBehaviour
             Instantiate(enemies[randomEnemy], spawnPoints[randomSpawnPoint].position, Quaternion.identity);
             spawnAllowed = false;
         }
+    }
+
+    public void Deactivate()
+    {
+        this.gameObject.SetActive(false);
     }
 }

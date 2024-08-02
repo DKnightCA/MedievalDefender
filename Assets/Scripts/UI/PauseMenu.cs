@@ -8,14 +8,10 @@ public class PauseMenu : MonoBehaviour
 {
     private bool activeState = false;
 
-    void OnEnable()
+    void Start()
     {
         EventManager.OnTogglePauseMenu += ToggleUI;
-    }
-
-    void OnDisable()
-    {
-        EventManager.OnTogglePauseMenu -= ToggleUI;
+        this.gameObject.SetActive(activeState);
     }
 
     public void PlayGame()

@@ -5,20 +5,11 @@ using UnityEngine.SceneManagement;
 
 public class PlayerUICanvas : MonoBehaviour
 {
-    private bool activeState = false;
-    void OnEnable()
+    private bool activeState = true;
+    void Start()
     {
         EventManager.OnTogglePauseMenu += ToggleUI;
-    }
-
-    void OnDisable()
-    {
-        EventManager.OnTogglePauseMenu -= ToggleUI;
-    }
-
-    public void PlayGame()
-    {
-        SceneManager.LoadScene("Level");
+        this.gameObject.SetActive(activeState);
     }
 
     public void ToggleUI()

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.Tilemaps;
 
 public class LevelManager : MonoBehaviour
 {
@@ -10,6 +11,8 @@ public class LevelManager : MonoBehaviour
     private float countdownTime;
     public TextMeshProUGUI countdownText;
     private bool isPaused;
+
+    public Tilemap borderTilemap;
     // Start is called before the first frame update
 
     void OnEnable()
@@ -18,15 +21,10 @@ public class LevelManager : MonoBehaviour
         EventManager.OnTogglePauseMenu += TogglePause;
     }
 
-    void OnDisable()
-    {
-        EventManager.OnLevelPassed -= PassLevel;
-        EventManager.OnTogglePauseMenu -= TogglePause;
-    }
-
     void Start()
     {
         countdownTime = levelTime;
+
     }
 
     // Update is called once per frame
@@ -49,6 +47,7 @@ public class LevelManager : MonoBehaviour
         if(countdownTime <= 0)
         {
             countdownText.text = "00:00";
+            EventManager.LevelPassed();
         }
     }
 
@@ -62,6 +61,15 @@ public class LevelManager : MonoBehaviour
 
     private void PassLevel()
     {
+        RemoveTile(new Vector3Int(-1, 4, 0));
+        RemoveTile(new Vector3Int(0, 4, 0));
+        RemoveTile(new Vector3Int(1, 4, 0));
         // Deactivate MonsterSpawners and monsters. Activate LevelPassed Canvas
+    }
+
+    public void RemoveTile(Vector3Int tilePosition)
+    {
+        // If newTile is null, it will remove the tile at the specified position
+        borderTilemap.SetTile(tilePosition, null);
     }
 }

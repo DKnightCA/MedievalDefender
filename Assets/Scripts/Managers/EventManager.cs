@@ -8,6 +8,7 @@ public class EventManager : MonoBehaviour
     public static event Action<GameObject> OnEnemyDefeated;
     public static event Action OnLevelPassed;
     public static event Action OnTogglePauseMenu;
+   
 
 
     public static void EnemyDefeated(GameObject enemy)
