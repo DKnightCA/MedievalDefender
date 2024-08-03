@@ -593,6 +593,9 @@ MonoBehaviour:
   sizeY: 5
   starterRoom: {x: 0, y: 0}
   finalRoom: {x: 0, y: 0}
+  roomPrefab: {fileID: 8894630413409095958, guid: 60de1a2f9e4241d40b65eb9e073462cc, type: 3}
+  activeRoom: {fileID: 0}
+  roomSize: {x: 0, y: 0}
 --- !u!1001 &775466217
 PrefabInstance:
   m_ObjectHideFlags: 0
