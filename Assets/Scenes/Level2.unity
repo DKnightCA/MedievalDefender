@@ -513,6 +513,7 @@ GameObject:
   - component: {fileID: 695611742}
   - component: {fileID: 695611741}
   - component: {fileID: 695611744}
+  - component: {fileID: 695611745}
   m_Layer: 0
   m_Name: LevelManager
   m_TagString: Untagged
@@ -576,6 +577,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   levelTime: 3
   countdownText: {fileID: 90198028}
+--- !u!114 &695611745
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 695611740}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d1943782e0faa864e86c8d6722975cc6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sizeX: 5
+  sizeY: 5
+  starterRoom: {x: 0, y: 0}
+  finalRoom: {x: 0, y: 0}
 --- !u!1001 &775466217
 PrefabInstance:
   m_ObjectHideFlags: 0

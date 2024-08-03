@@ -1,0 +1,19 @@
+Laberinto tendrá varias salas
+1: Sala inicial. Sin enemigos ni objetos. Siempre tendrá salidas a izq y dcha. Puede que arriba también. Se verá
+2: Sala final. Salida por arriba. Otra salida para conectar. Puede que haya bossfight o batalla cronómetro.
+3: Sala normal. Puede o no haber enemigos y/o objetos. Si hay, siempre spawnean en la primera entrada. En entradas subsiguientes, pueden spawnear enemigos aleatoriamente.
+	Si lo hacen, siempre serán menos que la original.
+4: Sala enemigos. No puedes salir hasta que elimines a los enemigos. Siempre aparece un objeto al final.
+
+// Siguientes salas solo si no es demasiado difícil/ se va de tiempo.
+5: Sala objeto jefe. Pelea de cronómetro y al final spawnea un objeto. Hay 2
+6: Sala jefe. Si accedes a ella y colocas los 2 objetos de jefe, empieza una batalla de jefe. Es completamente opcional, te da la habilidad de escudo mágico.
+	Esta sala solo tiene 1 salida.
+
+
+
+ALGORITMO GENERACIÓN
+
+empezamos desde sala inicial
+buscamos vecinos no visitados.
+elegimos uno aleatorio	
