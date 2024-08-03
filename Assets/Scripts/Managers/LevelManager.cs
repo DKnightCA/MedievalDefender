@@ -7,9 +7,7 @@ using UnityEngine.Tilemaps;
 public class LevelManager : MonoBehaviour
 {
 
-    public float levelTime;
-    private float countdownTime;
-    public TextMeshProUGUI countdownText;
+    
     private bool isPaused;
 
     public Tilemap borderTilemap;
@@ -23,8 +21,6 @@ public class LevelManager : MonoBehaviour
 
     void Start()
     {
-        countdownTime = levelTime;
-
     }
 
     // Update is called once per frame
@@ -33,22 +29,7 @@ public class LevelManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.P))
         {
             EventManager.TogglePauseMenu();
-        }
-        UpdateCountdownTime();
-    }
-
-    private void UpdateCountdownTime()
-    {
-        countdownTime -= Time.deltaTime;
-        int minutes = Mathf.FloorToInt(countdownTime / 60F);
-        int seconds = Mathf.FloorToInt(countdownTime % 60F);
-        countdownText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
-
-        if(countdownTime <= 0)
-        {
-            countdownText.text = "00:00";
-            EventManager.LevelPassed();
-        }
+        }   
     }
 
     public void TogglePause()

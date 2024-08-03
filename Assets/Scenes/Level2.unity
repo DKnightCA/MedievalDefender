@@ -512,6 +512,7 @@ GameObject:
   - component: {fileID: 695611743}
   - component: {fileID: 695611742}
   - component: {fileID: 695611741}
+  - component: {fileID: 695611744}
   m_Layer: 0
   m_Name: LevelManager
   m_TagString: Untagged
@@ -545,8 +546,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2ce04fb9c262d94db80d20697e25cb7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  levelTime: 3
-  countdownText: {fileID: 90198028}
   borderTilemap: {fileID: 2133150650}
 --- !u!4 &695611743
 Transform:
@@ -563,6 +562,20 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &695611744
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 695611740}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: febfd2eee44221c41adcb166376f5730, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  levelTime: 3
+  countdownText: {fileID: 90198028}
 --- !u!1001 &775466217
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4291,6 +4304,8 @@ GameObject:
   - component: {fileID: 1917364403}
   - component: {fileID: 1917364402}
   - component: {fileID: 1917364405}
+  - component: {fileID: 1917364406}
+  - component: {fileID: 1917364407}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -4383,6 +4398,33 @@ MonoBehaviour:
   moveCooldown: 0.5
   cameraWidth: 0
   cameraHeight: 0
+--- !u!114 &1917364406
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1917364401}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 158b85478440eba43a8c785a22ea3a6e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseOrthographicSize: 5
+  baseAspectRatio: 1.7777778
+--- !u!114 &1917364407
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1917364401}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f2f9920d315ead648b517192cee78109, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  desiredWidth: 19
 --- !u!1001 &1965481244
 PrefabInstance:
   m_ObjectHideFlags: 0
