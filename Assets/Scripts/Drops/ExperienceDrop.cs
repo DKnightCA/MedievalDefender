@@ -18,13 +18,10 @@ public class ExperienceDrop : MonoBehaviour
 
     public void HandleEnemyDefeated(GameObject defeatedEnemy)
     {
-        Debug.Log("HandleEnemyDefeated");
         if (defeatedEnemy != this.gameObject)
         {
-            Debug.Log("incorrect");
             return;
         }
-        Debug.Log("CORRECTO");
         PlayerDataManager.Instance.AddExperience(experience);
     }
 }

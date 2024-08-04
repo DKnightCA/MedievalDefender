@@ -14,6 +14,9 @@ public class EventManager : MonoBehaviour
     public static event Action OnCameraGoUp;
     public static event Action OnCameraGoDown;
 
+    public static event Action<MazeRoom> OnEnterRoom;
+    public static event Action<MazeRoom> OnExitRoom;
+
 
     public static void EnemyDefeated(GameObject enemy)
     {
@@ -50,4 +53,13 @@ public class EventManager : MonoBehaviour
         OnCameraGoDown?.Invoke();
     }
 
+    public static void EnterRoom(MazeRoom room)
+    {
+        OnEnterRoom?.Invoke(room);
+    }
+
+    public static void ExitRoom(MazeRoom room)
+    {
+        OnExitRoom?.Invoke(room);
+    }
 }

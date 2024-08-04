@@ -3,13 +3,12 @@ using UnityEngine;
 [RequireComponent(typeof(Camera))]
 public class CameraWidthAdjuster : MonoBehaviour
 {
-    public float desiredWidth = 10f; // Desired width of the camera view
+    public float desiredWidth; // Desired width of the camera view
 
-    private Camera mainCamera;
+    public Camera mainCamera;
 
-    void Start()
+    void Awake()
     {
-        mainCamera = GetComponent<Camera>();
         AdjustCameraWidth();
     }
 

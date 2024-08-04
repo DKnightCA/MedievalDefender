@@ -22,11 +22,14 @@ public class MazeGenerator : MonoBehaviour
     {
         starterRoom = new Vector2Int(sizeX / 2, 0);
         finalRoom = new Vector2Int(sizeX / 2, sizeY - 1);
-        roomSize = new Vector2(Camera.main.rect.x, Camera.main.rect.y);
+        float height = 2f * Camera.main.orthographicSize;
+        float width = height * Camera.main.aspect;
+        roomSize = new Vector2(width, height);
         InitializeRooms();
         GenerateMazePath();
-        DebugPrintMaze();
+        //DebugPrintMaze();
         InstantiateRoomConnectors();
+        activeRoom = rooms[starterRoom.x, starterRoom.y];
     }
 
     void InitializeRooms()
@@ -52,7 +55,6 @@ public class MazeGenerator : MonoBehaviour
         int startY = 0;
         int endX = sizeX / 2;
         int endY = sizeY - 1;
-        Debug.Log(endX +"---"+ endY);
 
         // Create a stack for the DFS
         Stack<Vector2Int> stack = new Stack<Vector2Int>();
@@ -146,7 +148,7 @@ public class MazeGenerator : MonoBehaviour
                 if (rooms[x, y].connections[0])
                 {
                     Vector3 position = RoomNumberToPosition(new Vector2Int(x, y));
-                    position.y += rooms[x, y].sizeWorldY / 2;
+                    position.y += roomSize.y / 2;
                     limit = Instantiate(roomLimitPrefab, position, Quaternion.identity);
                     limit.transform.Find("TopLimit").gameObject.SetActive(true);
                     limit.transform.Find("BottomLimit").gameObject.SetActive(true);
@@ -156,7 +158,7 @@ public class MazeGenerator : MonoBehaviour
                 if (rooms[x, y].connections[3])
                 {
                     Vector3 position = RoomNumberToPosition(new Vector2Int(x, y));
-                    position.x += rooms[x, y].sizeWorldX / 2;
+                    position.x += roomSize.x / 2;
                     limit = Instantiate(roomLimitPrefab, position, Quaternion.identity);
                     limit.transform.Find("LeftLimit").gameObject.SetActive(true);
                     limit.transform.Find("RightLimit").gameObject.SetActive(true);
@@ -202,16 +204,9 @@ public class MazeGenerator : MonoBehaviour
     private Vector3 RoomNumberToPosition(Vector2Int roomPosition)
     { 
         Vector3 mainTransform = Camera.main.transform.position;
-        float height = 2f * Camera.main.orthographicSize;
-        float width = height * Camera.main.aspect;
-        Vector2 size = new Vector2(width, height);
-        Debug.Log("Roompo " + roomPosition);
-        Debug.Log("starpo" + starterRoom);
         Vector2Int distanceToStarterRoom = roomPosition - starterRoom;
-        Debug.Log("DISTANCE: " + distanceToStarterRoom.x + " " + distanceToStarterRoom.y);
-
-        float x = (mainTransform.x + (size.x * distanceToStarterRoom.x));
-        float y = (mainTransform.y + (size.y * distanceToStarterRoom.y));
+        float x = (mainTransform.x + (roomSize.x * distanceToStarterRoom.x));
+        float y = (mainTransform.y + (roomSize.y * distanceToStarterRoom.y));
         return new Vector3(x, y, 1);
     }
 

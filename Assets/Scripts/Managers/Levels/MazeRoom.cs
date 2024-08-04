@@ -31,18 +31,26 @@ public class MazeRoom : MonoBehaviour
             connections[i] = false;
         }
         Camera mainCamera = Camera.main;
-        sizeWorldX = mainCamera.rect.x;
-        sizeWorldY = mainCamera.rect.y;
+        sizeWorldX = 2f * Camera.main.orthographicSize;
+        sizeWorldY = sizeWorldX * Camera.main.aspect;
     }
     void Start()
     {
         Instantiate(objeto, transform);
+        EventManager.OnEnterRoom += EnterRoom;
+        EventManager.OnExitRoom += ExitRoom;
+
     }
 
     // Initializes the elements of the room when the player enters.
-    public void EnterRoom()
+    public void EnterRoom(MazeRoom room)
     {
+        // Instantiate enemies and objects
+    }
 
+    public void ExitRoom(MazeRoom room)
+    {
+        // Destroy all enemies
     }
 
 }
