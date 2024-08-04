@@ -8,6 +8,7 @@ public class MazeGenerator : MonoBehaviour
     public Vector2Int starterRoom;
     public Vector2Int finalRoom;
 
+    public GameObject roomLimitPrefab;
     public GameObject roomPrefab;
     public MazeRoom[,] rooms;
     public MazeRoom activeRoom;
@@ -25,6 +26,7 @@ public class MazeGenerator : MonoBehaviour
         InitializeRooms();
         GenerateMazePath();
         DebugPrintMaze();
+        InstantiateRoomConnectors();
     }
 
     void InitializeRooms()
@@ -36,6 +38,7 @@ public class MazeGenerator : MonoBehaviour
             for (int y = 0; y < sizeY; y++)
             {
                 GameObject newRoom = Instantiate(roomPrefab, RoomNumberToPosition(new Vector2Int(x, y)), Quaternion.identity);
+                newRoom.name = $"MazeRoom_{x}_{y}";
                 //Debug.Log("POSITION: " + RoomNumberToPosition(new Vector2Int(x, y)).x + RoomNumberToPosition(new Vector2Int(x, y)).y);
                 rooms[x, y] = newRoom.GetComponent<MazeRoom>();
             }
@@ -130,6 +133,37 @@ public class MazeGenerator : MonoBehaviour
         {
             rooms[current.x, current.y].connections[1] = true; // South
             rooms[neighbor.x, neighbor.y].connections[0] = true; // North
+        }
+    }
+
+    void InstantiateRoomConnectors()
+    {
+        GameObject limit;
+        for (int x = 0; x < sizeX; x++)
+        {
+            for (int y = 0; y < sizeY; y++)
+            {
+                if (rooms[x, y].connections[0])
+                {
+                    Vector3 position = RoomNumberToPosition(new Vector2Int(x, y));
+                    position.y += rooms[x, y].sizeWorldY / 2;
+                    limit = Instantiate(roomLimitPrefab, position, Quaternion.identity);
+                    limit.transform.Find("TopLimit").gameObject.SetActive(true);
+                    limit.transform.Find("BottomLimit").gameObject.SetActive(true);
+                    limit.name = $"RoomLimit_{x}_{y}_N";
+
+                }
+                if (rooms[x, y].connections[3])
+                {
+                    Vector3 position = RoomNumberToPosition(new Vector2Int(x, y));
+                    position.x += rooms[x, y].sizeWorldX / 2;
+                    limit = Instantiate(roomLimitPrefab, position, Quaternion.identity);
+                    limit.transform.Find("LeftLimit").gameObject.SetActive(true);
+                    limit.transform.Find("RightLimit").gameObject.SetActive(true);
+                    limit.name = $"RoomLimit_{x}_{y}_E";
+
+                }
+            }
         }
     }
 

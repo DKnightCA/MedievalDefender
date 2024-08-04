@@ -17,3 +17,5 @@ ALGORITMO GENERACIÓN
 empezamos desde sala inicial
 buscamos vecinos no visitados.
 elegimos uno aleatorio	
+
+Tilemap por sala mide 18 horizontal y 10 vertical. +1 por eje de distancia entre habitaciones.

@@ -1,12 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class MazeRoom : MonoBehaviour
 {
     // The size of the room, in tiles.
-    public int sizeTileX;
-    public int sizeTileY;
+    public Tilemap floorTilemap;
+    public Tilemap wallsTilemap;
+    public TileBase floorTile;
+    public TileBase wallTile;
+    public int sizeTileX = 19;
+    public int sizeTileY = 11;
 
     public float sizeWorldX;
     public float sizeWorldY;
@@ -25,12 +30,12 @@ public class MazeRoom : MonoBehaviour
         {
             connections[i] = false;
         }
-    }
-    void Start()
-    {
         Camera mainCamera = Camera.main;
         sizeWorldX = mainCamera.rect.x;
         sizeWorldY = mainCamera.rect.y;
+    }
+    void Start()
+    {
         Instantiate(objeto, transform);
     }
 
@@ -39,4 +44,5 @@ public class MazeRoom : MonoBehaviour
     {
 
     }
+
 }
