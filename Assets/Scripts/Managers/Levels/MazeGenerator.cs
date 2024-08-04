@@ -12,14 +12,19 @@ public class MazeGenerator : MonoBehaviour
     public MazeRoom[,] rooms;
     public MazeRoom activeRoom;
     public Vector2 roomSize;
+
+    private void Awake()
+    {
+        
+    }
     void Start()
     {
+        starterRoom = new Vector2Int(sizeX / 2, 0);
+        finalRoom = new Vector2Int(sizeX / 2, sizeY - 1);
+        roomSize = new Vector2(Camera.main.rect.x, Camera.main.rect.y);
         InitializeRooms();
         GenerateMazePath();
         DebugPrintMaze();
-        starterRoom = new Vector2Int(sizeX/2, 0);
-        finalRoom = new Vector2Int(sizeX/2, sizeY-1);
-        roomSize = new Vector2(Camera.main.rect.x, Camera.main.rect.y);
     }
 
     void InitializeRooms()
@@ -166,8 +171,10 @@ public class MazeGenerator : MonoBehaviour
         float height = 2f * Camera.main.orthographicSize;
         float width = height * Camera.main.aspect;
         Vector2 size = new Vector2(width, height);
-        Debug.Log("SIZE: " + size.x + " " + size.y);
-        Vector2Int distanceToStarterRoom = starterRoom - roomPosition;
+        Debug.Log("Roompo " + roomPosition);
+        Debug.Log("starpo" + starterRoom);
+        Vector2Int distanceToStarterRoom = roomPosition - starterRoom;
+        Debug.Log("DISTANCE: " + distanceToStarterRoom.x + " " + distanceToStarterRoom.y);
 
         float x = (mainTransform.x + (size.x * distanceToStarterRoom.x));
         float y = (mainTransform.y + (size.y * distanceToStarterRoom.y));
