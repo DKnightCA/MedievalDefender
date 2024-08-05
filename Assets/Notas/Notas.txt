@@ -19,3 +19,4 @@ buscamos vecinos no visitados.
 elegimos uno aleatorio	
 
 Tilemap por sala mide 18 horizontal y 10 vertical. +1 por eje de distancia entre habitaciones.
+(-9,-5) a (8,4)

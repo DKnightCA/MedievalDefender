@@ -10,8 +10,8 @@ public class MazeRoom : MonoBehaviour
     public Tilemap wallsTilemap;
     public TileBase floorTile;
     public TileBase wallTile;
-    public int sizeTileX = 19;
-    public int sizeTileY = 11;
+    public int sizeTileX = 18;
+    public int sizeTileY = 10;
 
     public float sizeWorldX;
     public float sizeWorldY;

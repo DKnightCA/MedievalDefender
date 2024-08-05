@@ -1,5 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.Tilemaps;
+using System;
 
 public class MazeGenerator : MonoBehaviour
 {
@@ -14,10 +16,20 @@ public class MazeGenerator : MonoBehaviour
     public MazeRoom activeRoom;
     public Vector2 roomSize;
 
+    private Vector2Int tilemapStart = new Vector2Int(-9, -5);
+    private Vector2Int tilemapEnd = new Vector2Int(8, 4);
+    private Vector2Int spaceBetweenRooms = new Vector2Int(1, 1);
+    private Vector2Int roomSizeInTiles = new Vector2Int(18, 10);
+    public Tilemap floorTilemap;
+    public Tilemap wallsTilemap;
+    public TileBase floorTile;
+    public TileBase wallTile;
+
     private void Awake()
     {
         
     }
+
     void Start()
     {
         starterRoom = new Vector2Int(sizeX / 2, 0);
@@ -29,6 +41,13 @@ public class MazeGenerator : MonoBehaviour
         GenerateMazePath();
         //DebugPrintMaze();
         InstantiateRoomConnectors();
+        for (int x = 0; x < sizeX; x++)
+        {
+            for (int y = 0; y < sizeY; y++)
+            {
+                CreateTilemap(new Vector2Int(x, y));
+            }
+        }
         activeRoom = rooms[starterRoom.x, starterRoom.y];
     }
 
@@ -40,7 +59,7 @@ public class MazeGenerator : MonoBehaviour
         {
             for (int y = 0; y < sizeY; y++)
             {
-                GameObject newRoom = Instantiate(roomPrefab, RoomNumberToPosition(new Vector2Int(x, y)), Quaternion.identity);
+                GameObject newRoom = Instantiate(roomPrefab, RoomNumberToWorldPosition(new Vector2Int(x, y)), Quaternion.identity);
                 newRoom.name = $"MazeRoom_{x}_{y}";
                 //Debug.Log("POSITION: " + RoomNumberToPosition(new Vector2Int(x, y)).x + RoomNumberToPosition(new Vector2Int(x, y)).y);
                 rooms[x, y] = newRoom.GetComponent<MazeRoom>();
@@ -90,7 +109,7 @@ public class MazeGenerator : MonoBehaviour
 
             if (neighbors.Count > 0)
             {
-                Vector2Int chosenNeighbor = neighbors[Random.Range(0, neighbors.Count)];
+                Vector2Int chosenNeighbor = neighbors[UnityEngine.Random.Range(0, neighbors.Count)];
                 visited.Add(chosenNeighbor);
                 stack.Push(chosenNeighbor);
 
@@ -147,7 +166,7 @@ public class MazeGenerator : MonoBehaviour
             {
                 if (rooms[x, y].connections[0])
                 {
-                    Vector3 position = RoomNumberToPosition(new Vector2Int(x, y));
+                    Vector3 position = RoomNumberToWorldPosition(new Vector2Int(x, y));
                     position.y += roomSize.y / 2;
                     limit = Instantiate(roomLimitPrefab, position, Quaternion.identity);
                     limit.transform.Find("TopLimit").gameObject.SetActive(true);
@@ -157,7 +176,7 @@ public class MazeGenerator : MonoBehaviour
                 }
                 if (rooms[x, y].connections[3])
                 {
-                    Vector3 position = RoomNumberToPosition(new Vector2Int(x, y));
+                    Vector3 position = RoomNumberToWorldPosition(new Vector2Int(x, y));
                     position.x += roomSize.x / 2;
                     limit = Instantiate(roomLimitPrefab, position, Quaternion.identity);
                     limit.transform.Find("LeftLimit").gameObject.SetActive(true);
@@ -193,15 +212,103 @@ public class MazeGenerator : MonoBehaviour
 
         if (neighbors.Count > 0)
         {
-            Vector2Int chosenNeighbor = neighbors[Random.Range(0, neighbors.Count)];
+            Vector2Int chosenNeighbor = neighbors[UnityEngine.Random.Range(0, neighbors.Count)];
             CreateConnection(endRoomPos, chosenNeighbor);
             visited.Add(endRoomPos);
         }
     }
 
+    void CreateTilemap(Vector2Int roomPosition)
+    {
+        CreateFloorTilemap(roomPosition);
+        CreateWallsTilemap(roomPosition);
+        RemoveConnectedWalls(roomPosition);
+    }
+
+    private void CreateFloorTilemap(Vector2Int roomPosition)
+    {
+        for (int x = tilemapStart.x; x <= tilemapEnd.x; x++)
+        {
+            for (int y = tilemapStart.y; y <= tilemapEnd.y; y++)
+            {
+                Vector2Int distanceToStarterRoom = roomPosition - starterRoom;
+                int realX = x + (distanceToStarterRoom.x * roomSizeInTiles.x) + (distanceToStarterRoom.x * spaceBetweenRooms.x);
+                int realY = y + (distanceToStarterRoom.y * roomSizeInTiles.y) + (distanceToStarterRoom.y * spaceBetweenRooms.y);
+                floorTilemap.SetTile(new Vector3Int(realX, realY, 0), floorTile);
+            }
+        }
+    }
+
+    private void CreateWallsTilemap(Vector2Int roomPosition)
+    {
+
+        for (int x = tilemapStart.x; x <= tilemapEnd.x; x++)
+        {
+            if ((x == tilemapStart.x || x == tilemapEnd.x))
+            {
+                for (int y = tilemapStart.y; y <= tilemapEnd.y; y++)
+                {
+                    Vector2Int distanceToStarterRoom = roomPosition - starterRoom;
+                    int realX = x + (distanceToStarterRoom.x * roomSizeInTiles.x) + (distanceToStarterRoom.x * spaceBetweenRooms.x);
+                    int realY = y + (distanceToStarterRoom.y * roomSizeInTiles.y) + (distanceToStarterRoom.y * spaceBetweenRooms.y);
+                    wallsTilemap.SetTile(new Vector3Int(realX, realY, 0), wallTile);
+                }
+            }
+        }
+
+        for (int y = tilemapStart.y; y <= tilemapEnd.y; y++)
+        {
+            if ((y == tilemapStart.y || y == tilemapEnd.y))
+            {
+                for (int x = tilemapStart.x; x <= tilemapEnd.x; x++)
+                {
+                    Vector2Int distanceToStarterRoom = roomPosition - starterRoom;
+                    int realX = x + (distanceToStarterRoom.x * roomSizeInTiles.x) + (distanceToStarterRoom.x * spaceBetweenRooms.x);
+                    int realY = y + (distanceToStarterRoom.y * roomSizeInTiles.y) + (distanceToStarterRoom.y * spaceBetweenRooms.y);
+                    wallsTilemap.SetTile(new Vector3Int(realX, realY, 0), wallTile);
+                }
+            }
+        }
+
+    }
+
+    private void RemoveConnectedWalls(Vector2Int roomPosition)
+    {
+        MazeRoom selectedRoom = rooms[roomPosition.x, roomPosition.y];
+        Vector2Int distanceToStarterRoom = roomPosition - starterRoom;
+        if (selectedRoom.connections[0])
+        {
+            int realX = (distanceToStarterRoom.x * roomSizeInTiles.x) + (distanceToStarterRoom.x * spaceBetweenRooms.x);
+            int realY = (distanceToStarterRoom.y * roomSizeInTiles.y) + (distanceToStarterRoom.y * spaceBetweenRooms.y) + (tilemapEnd.y);
+            wallsTilemap.SetTile(new Vector3Int(realX, realY, 0), null);
+            wallsTilemap.SetTile(new Vector3Int(realX-1, realY, 0), null);
+        }
+        if (selectedRoom.connections[1])
+        {
+            int realX = (distanceToStarterRoom.x * roomSizeInTiles.x) + (distanceToStarterRoom.x * spaceBetweenRooms.x);
+            int realY = (distanceToStarterRoom.y * roomSizeInTiles.y) + (distanceToStarterRoom.y * spaceBetweenRooms.y) + (tilemapStart.y);
+            wallsTilemap.SetTile(new Vector3Int(realX, realY, 0), null);
+            wallsTilemap.SetTile(new Vector3Int(realX-1, realY, 0), null);
+        }
+        if (selectedRoom.connections[2])
+        {
+            int realX = (distanceToStarterRoom.x * roomSizeInTiles.x) + (distanceToStarterRoom.x * spaceBetweenRooms.x) + (tilemapStart.x);
+            int realY = (distanceToStarterRoom.y * roomSizeInTiles.y) + (distanceToStarterRoom.y * spaceBetweenRooms.y);
+            wallsTilemap.SetTile(new Vector3Int(realX, realY, 0), null);
+            wallsTilemap.SetTile(new Vector3Int(realX, realY-1, 0), null);
+        }
+        if (selectedRoom.connections[3])
+        {
+            int realX = (distanceToStarterRoom.x * roomSizeInTiles.x) + (distanceToStarterRoom.x * spaceBetweenRooms.x) + (tilemapEnd.x);
+            int realY = (distanceToStarterRoom.y * roomSizeInTiles.y) + (distanceToStarterRoom.y * spaceBetweenRooms.y);
+            wallsTilemap.SetTile(new Vector3Int(realX, realY, 0), null);
+            wallsTilemap.SetTile(new Vector3Int(realX, realY - 1, 0), null);
+
+        }
+    }
 
     // Initial Room is supposed to spawn on 0,0. However, it is not on MazeRooms[0,0].
-    private Vector3 RoomNumberToPosition(Vector2Int roomPosition)
+    private Vector3 RoomNumberToWorldPosition(Vector2Int roomPosition)
     { 
         Vector3 mainTransform = Camera.main.transform.position;
         Vector2Int distanceToStarterRoom = roomPosition - starterRoom;
