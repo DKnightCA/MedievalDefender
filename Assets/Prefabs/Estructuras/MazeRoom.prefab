@@ -48,8 +48,8 @@ MonoBehaviour:
   wallsTilemap: {fileID: 0}
   floorTile: {fileID: 11400000, guid: ccd72de5c463d2c469b396acac267d61, type: 2}
   wallTile: {fileID: 11400000, guid: 9da8bfdc139b92b4f9c6ae068455a104, type: 2}
-  sizeTileX: 0
-  sizeTileY: 0
+  sizeTileX: 18
+  sizeTileY: 10
   sizeWorldX: 0
   sizeWorldY: 0
   connections: 

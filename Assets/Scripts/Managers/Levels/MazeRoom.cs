@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
-using System;
 
 public class MazeRoom : MonoBehaviour
 {
@@ -40,45 +39,68 @@ public class MazeRoom : MonoBehaviour
     void Start()
     {
         //Instantiate(roomObjects, transform);
-        EventManager.OnEnterRoom += EnterRoom;
+        /*EventManager.OnEnterRoom += EnterRoom;
         EventManager.OnExitRoom += ExitRoom;
-        EnterRoom(this);
+        EnterRoom(this);*/
 
     }
 
     // Initializes the elements of the room when the player enters.
-    public void EnterRoom(MazeRoom room)
+    public void EnterRoom()
     {
-        Vector2 enemiesSpawnZone = new Vector2(sizeWorldX, sizeWorldY);
-        Vector2 spawnPoint;
-        System.Random random = new System.Random();
-        instantiatedEnemies = new GameObject[enemies];
-        if (connections[0])
-        {
-            enemiesSpawnZone.x *= 0.7f;
-        }
-        if (connections[1])
-        {
-            enemiesSpawnZone.x *= 0.7f;
-        }
-        if (connections[2])
-        {
-            enemiesSpawnZone.y *= 0.7f;
-        }
-        if (connections[3])
-        {
-            enemiesSpawnZone.y *= 0.7f;
-        }
-
-        for (int i = 0; i < enemies; i++) {
-            spawnPoint = new Vector2(random.Next((int)enemiesSpawnZone.x), random.Next((int)enemiesSpawnZone.y));
-            instantiatedEnemies[i] = Instantiate(roomEnemies[0], new Vector3(enemiesSpawnZone.x, enemiesSpawnZone.y, 0), Quaternion.identity, transform);
-        }
+        SpawnEnemies();
     }
 
-    public void ExitRoom(MazeRoom room)
+    public void ExitRoom()
     {
         // Destroy all enemies
     }
 
+    // The first entry of the array is the bottom left corner of the spawn area, and the second entry is the top right corner.
+    private void SpawnEnemies()
+    {
+        Vector2[] spawnZone = GetSpawnZone();
+        Vector2 spawnPoint;
+        instantiatedEnemies = new GameObject[enemies];
+
+        for (int i = 0; i < enemies; i++)
+        {
+            spawnPoint = new Vector2(Random.Range(spawnZone[0].x, spawnZone[1].x), Random.Range(spawnZone[0].y, spawnZone[1].y));
+            instantiatedEnemies[i] = Instantiate(roomEnemies[0], spawnPoint, Quaternion.identity, transform);
+        }
+    }
+    private Vector2[] GetSpawnZone()
+    {
+        Vector2 pointZero = new Vector2(this.transform.position.x - sizeTileX/2 +2,
+                                        this.transform.position.y - sizeTileY/2 +2);
+        Vector2 enemiesSpawnZone = pointZero + new Vector2(sizeTileX -4, sizeTileY -4);
+        Debug.Log("pointZero: " + pointZero);
+        Debug.Log(enemiesSpawnZone);
+
+        // Adjust the spawn area of the enemies to be fair for the player.
+        if (connections[0])
+        {
+            pointZero.y -= 1;
+            enemiesSpawnZone.y -= 1.5f;
+        }
+        if (connections[1])
+        {
+            pointZero.y += 1.5f;
+            enemiesSpawnZone.y += 1;
+        }
+        if (connections[2])
+        {
+            pointZero.x += 1.5f;
+            enemiesSpawnZone.x += 1;
+        }
+        if (connections[3])
+        {
+            pointZero.x -= 1;
+            enemiesSpawnZone.y -= 1.5f;
+        }
+        Vector2[] result = new Vector2[2];
+        result[0] = pointZero;
+        result[1] = enemiesSpawnZone;
+        return result;
+    }
 }

@@ -13,8 +13,9 @@ public class MazeGenerator : MonoBehaviour
     public GameObject roomLimitPrefab;
     public GameObject roomPrefab;
     public MazeRoom[,] rooms;
-    public MazeRoom activeRoom;
     public Vector2 roomSize;
+    public MazeRoom activeRoom;
+    public Vector2Int activeRoomPosition;   
 
     private Vector2Int tilemapStart = new Vector2Int(-9, -5);
     private Vector2Int tilemapEnd = new Vector2Int(8, 4);
@@ -27,7 +28,10 @@ public class MazeGenerator : MonoBehaviour
 
     private void Awake()
     {
-        
+        EventManager.OnCameraGoDown += UpdateActiveRoomBottom;
+        EventManager.OnCameraGoUp += UpdateActiveRoomTop;
+        EventManager.OnCameraGoLeft += UpdateActiveRoomLeft;
+        EventManager.OnCameraGoRight += UpdateActiveRoomRight;
     }
 
     void Start()
@@ -48,7 +52,6 @@ public class MazeGenerator : MonoBehaviour
                 CreateTilemap(new Vector2Int(x, y));
             }
         }
-        activeRoom = rooms[starterRoom.x, starterRoom.y];
     }
 
     void InitializeRooms()
@@ -65,6 +68,8 @@ public class MazeGenerator : MonoBehaviour
                 rooms[x, y] = newRoom.GetComponent<MazeRoom>();
             }
         }
+        activeRoom = rooms[starterRoom.x, starterRoom.y];
+        activeRoomPosition = starterRoom;
     }
 
     void GenerateMazePath()
@@ -356,6 +361,35 @@ public class MazeGenerator : MonoBehaviour
         float x = (mainTransform.x + (roomSize.x * distanceToStarterRoom.x));
         float y = (mainTransform.y + (roomSize.y * distanceToStarterRoom.y));
         return new Vector3(x, y, 1);
+    }
+
+    private void UpdateActiveRoomTop()
+    {
+        activeRoom.ExitRoom();
+        activeRoomPosition.y++;
+        activeRoom = rooms[activeRoomPosition.x, activeRoomPosition.y];
+        activeRoom.EnterRoom();
+    }
+    private void UpdateActiveRoomBottom()
+    {
+        activeRoom.ExitRoom();
+        activeRoomPosition.y--;
+        activeRoom = rooms[activeRoomPosition.x, activeRoomPosition.y];
+        activeRoom.EnterRoom();
+    }
+    private void UpdateActiveRoomLeft()
+    {
+        activeRoom.ExitRoom();
+        activeRoomPosition.x--;
+        activeRoom = rooms[activeRoomPosition.x, activeRoomPosition.y];
+        activeRoom.EnterRoom();
+    }
+    private void UpdateActiveRoomRight()
+    {
+        activeRoom.ExitRoom();
+        activeRoomPosition.x++;
+        activeRoom = rooms[activeRoomPosition.x, activeRoomPosition.y];
+        activeRoom.EnterRoom();
     }
 
     void DebugPrintMaze()
