@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using System;
 
 public class MazeRoom : MonoBehaviour
 {
@@ -20,8 +21,10 @@ public class MazeRoom : MonoBehaviour
     public bool[] connections;
 
     public int enemies;
-    public GameObject[] enemyList;
-    public GameObject objeto;
+    public GameObject[] roomEnemies;
+    private GameObject[] instantiatedEnemies;
+    public GameObject roomObjects;
+    private GameObject instantiatedObject;
 
     void Awake()
     {
@@ -36,16 +39,41 @@ public class MazeRoom : MonoBehaviour
     }
     void Start()
     {
-        Instantiate(objeto, transform);
+        //Instantiate(roomObjects, transform);
         EventManager.OnEnterRoom += EnterRoom;
         EventManager.OnExitRoom += ExitRoom;
+        EnterRoom(this);
 
     }
 
     // Initializes the elements of the room when the player enters.
     public void EnterRoom(MazeRoom room)
     {
-        // Instantiate enemies and objects
+        Vector2 enemiesSpawnZone = new Vector2(sizeWorldX, sizeWorldY);
+        Vector2 spawnPoint;
+        System.Random random = new System.Random();
+        instantiatedEnemies = new GameObject[enemies];
+        if (connections[0])
+        {
+            enemiesSpawnZone.x *= 0.7f;
+        }
+        if (connections[1])
+        {
+            enemiesSpawnZone.x *= 0.7f;
+        }
+        if (connections[2])
+        {
+            enemiesSpawnZone.y *= 0.7f;
+        }
+        if (connections[3])
+        {
+            enemiesSpawnZone.y *= 0.7f;
+        }
+
+        for (int i = 0; i < enemies; i++) {
+            spawnPoint = new Vector2(random.Next((int)enemiesSpawnZone.x), random.Next((int)enemiesSpawnZone.y));
+            instantiatedEnemies[i] = Instantiate(roomEnemies[0], new Vector3(enemiesSpawnZone.x, enemiesSpawnZone.y, 0), Quaternion.identity, transform);
+        }
     }
 
     public void ExitRoom(MazeRoom room)

@@ -53,6 +53,7 @@ MonoBehaviour:
   sizeWorldX: 0
   sizeWorldY: 0
   connections: 
-  enemies: 0
-  enemyList: []
-  objeto: {fileID: 8206536473559149066, guid: b3007c6c279737744b5430ab57e4edd7, type: 3}
+  enemies: 3
+  roomEnemies:
+  - {fileID: 5689032216868007876, guid: 05bacb0c765503645b56b206f5bdad9d, type: 3}
+  roomObjects: {fileID: 0}
