@@ -2,17 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FinalRoom : MonoBehaviour
+public class FinalRoom : MazeRoom
 {
     // Start is called before the first frame update
-    void Start()
-    {
-        
+    public override void EnterRoom() { 
+        // Start boosfight or timed fight or whatever.
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    public override void ExitRoom() { }
 }

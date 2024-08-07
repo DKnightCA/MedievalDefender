@@ -12,6 +12,9 @@ public class MazeGenerator : MonoBehaviour
 
     public GameObject roomLimitPrefab;
     public GameObject roomPrefab;
+    public GameObject starterRoomPrefab;
+    public GameObject finalRoomPrefab;
+    public GameObject optionalBossItemRoomPrefab;
     public MazeRoom[,] rooms;
     public Vector2 roomSize;
     public MazeRoom activeRoom;
@@ -43,6 +46,7 @@ public class MazeGenerator : MonoBehaviour
         roomSize = new Vector2(width, height);
         InitializeRooms();
         GenerateMazePath();
+        GenerateOptionalBossRooms();
         //DebugPrintMaze();
         InstantiateRoomConnectors();
         for (int x = 0; x < sizeX; x++)
@@ -57,12 +61,21 @@ public class MazeGenerator : MonoBehaviour
     void InitializeRooms()
     {
         rooms = new MazeRoom[sizeX, sizeY];
-
+        Vector2Int currentRoom = new Vector2Int(0, 0); 
         for (int x = 0; x < sizeX; x++)
         {
             for (int y = 0; y < sizeY; y++)
             {
-                GameObject newRoom = Instantiate(roomPrefab, RoomNumberToWorldPosition(new Vector2Int(x, y)), Quaternion.identity);
+                currentRoom.x = x;
+                currentRoom.y = y;
+                GameObject newRoom;
+                if (currentRoom == starterRoom) {
+                    newRoom = Instantiate(starterRoomPrefab, RoomNumberToWorldPosition(new Vector2Int(x, y)), Quaternion.identity);
+                } else if (currentRoom == finalRoom) {
+                    newRoom = Instantiate(finalRoomPrefab, RoomNumberToWorldPosition(new Vector2Int(x, y)), Quaternion.identity);
+                } else {
+                    newRoom = Instantiate(roomPrefab, RoomNumberToWorldPosition(new Vector2Int(x, y)), Quaternion.identity);
+                }
                 newRoom.name = $"MazeRoom_{x}_{y}";
                 //Debug.Log("POSITION: " + RoomNumberToPosition(new Vector2Int(x, y)).x + RoomNumberToPosition(new Vector2Int(x, y)).y);
                 rooms[x, y] = newRoom.GetComponent<MazeRoom>();
@@ -72,66 +85,96 @@ public class MazeGenerator : MonoBehaviour
         activeRoomPosition = starterRoom;
     }
 
+    void DestroyRooms()
+    {
+        if (rooms == null)
+        {
+            return;
+        }
+        for (int x = 0; x < sizeX; x++)
+        {
+            for (int y = 0; y < sizeY; y++)
+            {
+                Destroy(rooms[x, y].gameObject);
+            }
+        }
+    }
+
+    void RestartRooms()
+    {
+        DestroyRooms();
+        InitializeRooms();
+    }
+
+
+    /* ++++++++++++++++++++++++++++++++++++++++++++++++ MAZE GENERATION ALGORITHM ++++++++++++++++++++++++++++++++++++++++++++++++ */
     void GenerateMazePath()
     {
-        // Define start and end points
-        int startX = sizeX / 2;
-        int startY = 0;
-        int endX = sizeX / 2;
-        int endY = sizeY - 1;
-
-        // Create a stack for the DFS
-        Stack<Vector2Int> stack = new Stack<Vector2Int>();
-        stack.Push(new Vector2Int(startX, startY));
-
-        // Create a set to keep track of visited rooms
-        HashSet<Vector2Int> visited = new HashSet<Vector2Int>();
-        visited.Add(new Vector2Int(startX, startY));
-
+        int deadEndCount = 0;
         // Directions: North, South, West, East
         Vector2Int[] directions = new Vector2Int[]
-        {
+            {
             new Vector2Int(0, 1),  // North
             new Vector2Int(0, -1), // South
             new Vector2Int(-1, 0), // West
             new Vector2Int(1, 0)   // East
-        };
+            };
 
-        while (stack.Count > 0)
+        // Repeat the maze generation until there are at least 2 dead ends
+        while (deadEndCount < 2)
         {
-            Vector2Int current = stack.Peek();
-            List<Vector2Int> neighbors = new List<Vector2Int>();
+            // Reset the rooms
+            RestartRooms();          
 
-            foreach (Vector2Int dir in directions)
+            // Create a stack for the DFS
+            Stack<Vector2Int> stack = new Stack<Vector2Int>();
+            stack.Push(starterRoom);
+
+            // Create a set to keep track of visited rooms
+            HashSet<Vector2Int> visited = new HashSet<Vector2Int>();
+            visited.Add(starterRoom);
+    
+            while (stack.Count > 0)
             {
-                Vector2Int neighbor = current + dir;
+                Vector2Int current = stack.Peek();
+                List<Vector2Int> neighbors = new List<Vector2Int>();
 
-                if (neighbor.x >= 0 && neighbor.x < sizeX && neighbor.y >= 0 && neighbor.y < sizeY && !visited.Contains(neighbor))
+                foreach (Vector2Int dir in directions)
                 {
-                    neighbors.Add(neighbor);
+                    Vector2Int neighbor = current + dir;
+
+                    if (neighbor.x >= 0 && neighbor.x < sizeX && neighbor.y >= 0 && neighbor.y < sizeY && !visited.Contains(neighbor))
+                    {
+                        neighbors.Add(neighbor);
+                    }
+                }
+
+                if (neighbors.Count > 0)
+                {
+                    Vector2Int chosenNeighbor = neighbors[UnityEngine.Random.Range(0, neighbors.Count)];
+                    visited.Add(chosenNeighbor);
+                    stack.Push(chosenNeighbor);
+
+                    // Create connection between current and chosenNeighbor
+                    CreateConnection(current, chosenNeighbor);
+                }
+                else
+                {
+                    stack.Pop();
                 }
             }
 
-            if (neighbors.Count > 0)
+            // Ensure end room is connected
+            if (!visited.Contains(finalRoom))
             {
-                Vector2Int chosenNeighbor = neighbors[UnityEngine.Random.Range(0, neighbors.Count)];
-                visited.Add(chosenNeighbor);
-                stack.Push(chosenNeighbor);
-
-                // Create connection between current and chosenNeighbor
-                CreateConnection(current, chosenNeighbor);
+                ConnectToPath(finalRoom, visited);
             }
-            else
-            {
-                stack.Pop();
-            }
-        }
 
-        // Ensure end room is connected
-        Vector2Int endRoomPos = new Vector2Int(endX, endY);
-        if (!visited.Contains(endRoomPos))
-        {
-            ConnectToPath(endRoomPos, visited);
+            // Check the number of dead ends
+            deadEndCount = SearchDeadEnds().Length;
+
+            // Debug output
+            Debug.Log("Number of dead ends: " + deadEndCount);
         }
     }
 
@@ -162,6 +205,80 @@ public class MazeGenerator : MonoBehaviour
         }
     }
 
+    void ConnectToPath(Vector2Int endRoomPos, HashSet<Vector2Int> visited)
+    {
+        List<Vector2Int> neighbors = new List<Vector2Int>();
+
+        Vector2Int[] directions = new Vector2Int[]
+        {
+            new Vector2Int(0, 1),  // North
+            new Vector2Int(0, -1), // South
+            new Vector2Int(-1, 0), // West
+            new Vector2Int(1, 0)   // East
+        };
+
+        foreach (Vector2Int dir in directions)
+        {
+            Vector2Int neighbor = endRoomPos + dir;
+
+            if (neighbor.x >= 0 && neighbor.x < sizeX && neighbor.y >= 0 && neighbor.y < sizeY && visited.Contains(neighbor))
+            {
+                neighbors.Add(neighbor);
+            }
+        }
+
+        if (neighbors.Count > 0)
+        {
+            Vector2Int chosenNeighbor = neighbors[UnityEngine.Random.Range(0, neighbors.Count)];
+            CreateConnection(endRoomPos, chosenNeighbor);
+            visited.Add(endRoomPos);
+        }
+    }
+
+    private MazeRoom[] SearchDeadEnds()
+    {
+        List<MazeRoom> deadEndRooms = new List<MazeRoom>();
+        for (int x = 0; x < sizeX; x++)
+        {
+            for (int y = 0; y < sizeY; y++)
+            {
+                MazeRoom room = rooms[x, y];
+                // Check if it's a dead end and not the starter or final room
+                if (room.IsDeadEnd() && !(new Vector2Int(x, y) == starterRoom) && !(new Vector2Int(x, y) == finalRoom))
+                {
+                    deadEndRooms.Add(room);
+                }
+            }
+        }
+
+        return deadEndRooms.ToArray();
+    }
+
+    public void GenerateOptionalBossRooms()
+    {
+        MazeRoom[] deadEnds = SearchDeadEnds();
+        int deadEndsToProcess = 2;
+
+        for (int i = 0; i < deadEndsToProcess; i++)
+        {
+            MazeRoom deadEnd = deadEnds[i];
+            Vector2Int deadEndPosition = FindRoom(deadEnd);
+            ReplaceRoom(deadEndPosition, optionalBossItemRoomPrefab);
+        }
+    }
+
+    private void ReplaceRoom(Vector2Int roomPosition, GameObject roomPrefab)
+    {
+        bool[] connections = rooms[roomPosition.x, roomPosition.y].connections;
+        Destroy(rooms[roomPosition.x, roomPosition.y].gameObject);
+        GameObject newRoom = Instantiate(roomPrefab, RoomNumberToWorldPosition(roomPosition), Quaternion.identity);
+        rooms[roomPosition.x, roomPosition.y] = newRoom.GetComponent<MazeRoom>();
+        rooms[roomPosition.x, roomPosition.y].connections = connections;
+    }
+
+
+    /* ++++++++++++++++++++++++++++++++++++++++++++++++ ROOM LOGIC ++++++++++++++++++++++++++++++++++++++++++++++++ */
+
     void InstantiateRoomConnectors()
     {
         GameObject limit;
@@ -190,36 +307,6 @@ public class MazeGenerator : MonoBehaviour
 
                 }
             }
-        }
-    }
-
-    void ConnectToPath(Vector2Int endRoomPos, HashSet<Vector2Int> visited)
-    {
-        List<Vector2Int> neighbors = new List<Vector2Int>();
-
-        Vector2Int[] directions = new Vector2Int[]
-        {
-            new Vector2Int(0, 1),  // North
-            new Vector2Int(0, -1), // South
-            new Vector2Int(-1, 0), // West
-            new Vector2Int(1, 0)   // East
-        };
-
-        foreach (Vector2Int dir in directions)
-        {
-            Vector2Int neighbor = endRoomPos + dir;
-
-            if (neighbor.x >= 0 && neighbor.x < sizeX && neighbor.y >= 0 && neighbor.y < sizeY && visited.Contains(neighbor))
-            {
-                neighbors.Add(neighbor);
-            }
-        }
-
-        if (neighbors.Count > 0)
-        {
-            Vector2Int chosenNeighbor = neighbors[UnityEngine.Random.Range(0, neighbors.Count)];
-            CreateConnection(endRoomPos, chosenNeighbor);
-            visited.Add(endRoomPos);
         }
     }
 
@@ -390,6 +477,23 @@ public class MazeGenerator : MonoBehaviour
         activeRoomPosition.x++;
         activeRoom = rooms[activeRoomPosition.x, activeRoomPosition.y];
         activeRoom.EnterRoom();
+    }
+
+    public Vector2Int FindRoom(MazeRoom room)
+    {
+        Vector2Int roomPosition = new Vector2Int(-1, -1);
+        for (int x = 0; x < sizeX; x++)
+        {
+            for (int y = 0; y < sizeY; y++)
+            {
+                if (rooms[x, y] == room)
+                {
+                    roomPosition = new Vector2Int(x, y);
+                    return roomPosition;
+                }
+            }
+        }
+        return roomPosition;
     }
 
     void DebugPrintMaze()

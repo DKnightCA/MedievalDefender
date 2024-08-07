@@ -36,24 +36,16 @@ public class MazeRoom : MonoBehaviour
         sizeWorldX = 2f * Camera.main.orthographicSize;
         sizeWorldY = sizeWorldX * Camera.main.aspect;
     }
-    void Start()
-    {
-        //Instantiate(roomObjects, transform);
-        /*EventManager.OnEnterRoom += EnterRoom;
-        EventManager.OnExitRoom += ExitRoom;
-        EnterRoom(this);*/
-
-    }
 
     // Initializes the elements of the room when the player enters.
-    public void EnterRoom()
+    public virtual void EnterRoom()
     {
         SpawnEnemies();
     }
 
-    public void ExitRoom()
+    public virtual void ExitRoom()
     {
-        // Destroy all enemies
+        DespawnEnemies();
     }
 
     // The first entry of the array is the bottom left corner of the spawn area, and the second entry is the top right corner.
@@ -69,6 +61,19 @@ public class MazeRoom : MonoBehaviour
             instantiatedEnemies[i] = Instantiate(roomEnemies[0], spawnPoint, Quaternion.identity, transform);
         }
     }
+
+    private void DespawnEnemies()
+    {
+        if(instantiatedEnemies == null)
+        {
+            return;
+        }
+        foreach (GameObject enemy in instantiatedEnemies)
+        {
+            Destroy(enemy);
+        }
+    }
+            
     private Vector2[] GetSpawnZone()
     {
         Vector2 pointZero = new Vector2(this.transform.position.x - sizeTileX/2 +2,
@@ -102,5 +107,19 @@ public class MazeRoom : MonoBehaviour
         result[0] = pointZero;
         result[1] = enemiesSpawnZone;
         return result;
+    }
+
+    public bool IsDeadEnd()
+    {
+        int connectionCount = 0;
+        foreach (bool con in connections)
+        {
+            if (con) { connectionCount++; }
+        }
+        if(connectionCount == 1)
+        {
+            return true;
+        }
+        return false;
     }
 }
