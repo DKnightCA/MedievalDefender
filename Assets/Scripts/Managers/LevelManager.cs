@@ -44,7 +44,6 @@ public class LevelManager : MonoBehaviour
     {
         RemoveTile(new Vector3Int(-1, 4, 0));
         RemoveTile(new Vector3Int(0, 4, 0));
-        RemoveTile(new Vector3Int(1, 4, 0));
         // Deactivate MonsterSpawners and monsters. Activate LevelPassed Canvas
     }
 

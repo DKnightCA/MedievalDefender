@@ -9,7 +9,7 @@ public class LeftRoomMovement : MonoBehaviour
         if (collision.tag == "Player")
         {
             EventManager.CameraGoLeft();
-            collision.transform.position = collision.transform.position += new Vector3(-3, 0, 0);
+            collision.transform.position = collision.transform.position += new Vector3(-2, 0, 0);
             this.gameObject.GetComponent<BoxCollider2D>().isTrigger = false;
             this.transform.parent.Find("RightLimit").GetComponent<BoxCollider2D>().isTrigger = true;
         }

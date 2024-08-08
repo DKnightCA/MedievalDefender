@@ -53,7 +53,7 @@ public class MazeGenerator : MonoBehaviour
         {
             for (int y = 0; y < sizeY; y++)
             {
-                CreateTilemap(new Vector2Int(x, y));
+                //CreateTilemap(new Vector2Int(x, y));
             }
         }
     }
@@ -170,11 +170,7 @@ public class MazeGenerator : MonoBehaviour
                 ConnectToPath(finalRoom, visited);
             }
 
-            // Check the number of dead ends
             deadEndCount = SearchDeadEnds().Length;
-
-            // Debug output
-            Debug.Log("Number of dead ends: " + deadEndCount);
         }
     }
 

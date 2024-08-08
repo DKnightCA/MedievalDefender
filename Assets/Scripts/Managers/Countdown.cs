@@ -8,17 +8,21 @@ public class Countdown : MonoBehaviour
     public float levelTime;
     private float countdownTime;
     public TextMeshProUGUI countdownText;
+    public bool isRunning = true;
 
     // Start is called before the first frame update
     void Start()
     {
+        countdownText = GameObject.Find("Countdown").GetComponent<TextMeshProUGUI>();
         countdownTime = levelTime;
     }
 
     // Update is called once per frame
     void Update()
     {
-        UpdateCountdownTime();
+        if (isRunning) {
+            UpdateCountdownTime();
+        }
     }
 
     private void UpdateCountdownTime()
@@ -34,5 +38,15 @@ public class Countdown : MonoBehaviour
             EventManager.LevelPassed();
 
         }
+    }
+
+    public void StartCountdown()
+    {
+        isRunning = true;
+    }
+
+    public void StopCountdown()
+    {
+        isRunning = false;
     }
 }

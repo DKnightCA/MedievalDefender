@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class MonsterSpawner : MonoBehaviour
 {
-    public Transform[] spawnPoints;
+    public Vector2[] spawnArea;
     public GameObject[] enemies;
-    int randomSpawnPoint;
     int randomEnemy;
-    public static bool spawnAllowed;
+    private bool spawnAllowed;
+    public bool isActive;
     public float timeBetweenSpawns;
     private float timer;
 
@@ -16,22 +16,16 @@ public class MonsterSpawner : MonoBehaviour
     void Start()
     {
         EventManager.OnLevelPassed += Deactivate;
-        spawnAllowed = true;
+        isActive = true;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(!spawnAllowed)
+        if (isActive)
         {
-            timer += Time.deltaTime;
-            if(timer > timeBetweenSpawns)
-            {
-                spawnAllowed = true;
-                timer = 0;
-            }
+            SpawnAMonster();
         }
-        SpawnAMonster();
 
     }
 
@@ -39,15 +33,29 @@ public class MonsterSpawner : MonoBehaviour
     {
         if(spawnAllowed)
         {
-            randomSpawnPoint = Random.Range(0, spawnPoints.Length);
+            Vector3 spawnPoint = new Vector3(Random.Range(spawnArea[0].x, spawnArea[1].x), Random.Range(spawnArea[0].y, spawnArea[1].y), 0);
             randomEnemy = Random.Range(0, enemies.Length);
-            Instantiate(enemies[randomEnemy], spawnPoints[randomSpawnPoint].position, Quaternion.identity);
+            Instantiate(enemies[randomEnemy], spawnPoint, Quaternion.identity);
             spawnAllowed = false;
+        }
+        else
+        {
+            timer += Time.deltaTime;
+            if (timer > timeBetweenSpawns)
+            {
+                spawnAllowed = true;
+                timer = 0;
+            }
         }
     }
 
     public void Deactivate()
     {
-        this.gameObject.SetActive(false);
+        isActive = false;
+    }
+
+    public void Activate()
+    {
+        isActive = true;
     }
 }

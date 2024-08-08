@@ -7,6 +7,7 @@ public class StarterRoom : MazeRoom
 
     void Start()
     {
+        base.Start();
         Instantiate(roomObjects, this.transform);
     }
     public override void EnterRoom(){}

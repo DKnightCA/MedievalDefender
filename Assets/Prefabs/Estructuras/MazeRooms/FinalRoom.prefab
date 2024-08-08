@@ -10,6 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 5358620910951598997}
   - component: {fileID: 4009846862400158980}
+  - component: {fileID: -6286285366610607973}
+  - component: {fileID: 6399254033190723929}
   m_Layer: 0
   m_Name: FinalRoom
   m_TagString: Untagged
@@ -56,3 +58,39 @@ MonoBehaviour:
   enemies: 0
   roomEnemies: []
   roomObjects: {fileID: 0}
+--- !u!114 &-6286285366610607973
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4627331902701998552}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: febfd2eee44221c41adcb166376f5730, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  levelTime: 5
+  countdownText: {fileID: 0}
+  isRunning: 0
+--- !u!114 &6399254033190723929
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4627331902701998552}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bb59c65db5846f9499fc098bc6ffe198, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spawnArea:
+  - {x: 0, y: 0}
+  - {x: 0, y: 0}
+  enemies:
+  - {fileID: 6397083870827187516, guid: 39fd214f067be8043b948d51182b3dde, type: 3}
+  - {fileID: 5689032216868007876, guid: 05bacb0c765503645b56b206f5bdad9d, type: 3}
+  - {fileID: 1814685351795684815, guid: 8ca2ab92b12daab4c840ce3a723aa702, type: 3}
+  isActive: 1
+  timeBetweenSpawns: 1.5
