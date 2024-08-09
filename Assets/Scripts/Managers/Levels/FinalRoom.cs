@@ -11,14 +11,15 @@ public class FinalRoom : MazeRoom
 
     void Start()
     {
-        EventManager.OnLevelPassed += RoomCleared;
         base.Start();
+        EventManager.OnLevelPassed += RoomCleared;
         countdown = this.gameObject.GetComponent<Countdown>();
 
         countdown.StopCountdown();
         spawner = this.gameObject.GetComponent<MonsterSpawner>();
         spawner.spawnArea[0] = GetTilemapStart() + new Vector2Int(1,1);
         spawner.spawnArea[1] = GetTilemapStart() + new Vector2Int(sizeTileX - 1, sizeTileY - 1);
+        spawner.Deactivate();
     }
     public override void EnterRoom() {
         if (!roomCleared)
@@ -29,7 +30,6 @@ public class FinalRoom : MazeRoom
         }
         // Start boosfight or timed fight or whatever.
     }
-
 
     public void RoomCleared()
     {   

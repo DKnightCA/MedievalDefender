@@ -1,7 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.Tilemaps;
-using System;
 
 public class MazeGenerator : MonoBehaviour
 {
@@ -15,6 +14,7 @@ public class MazeGenerator : MonoBehaviour
     public GameObject starterRoomPrefab;
     public GameObject finalRoomPrefab;
     public GameObject optionalBossItemRoomPrefab;
+    public GameObject trapRoomPrefab;
     public MazeRoom[,] rooms;
     public Vector2 roomSize;
     public MazeRoom activeRoom;
@@ -74,7 +74,7 @@ public class MazeGenerator : MonoBehaviour
                 } else if (currentRoom == finalRoom) {
                     newRoom = Instantiate(finalRoomPrefab, RoomNumberToWorldPosition(new Vector2Int(x, y)), Quaternion.identity);
                 } else {
-                    newRoom = Instantiate(roomPrefab, RoomNumberToWorldPosition(new Vector2Int(x, y)), Quaternion.identity);
+                    newRoom = GenerateRandomRoom(currentRoom);
                 }
                 newRoom.name = $"MazeRoom_{x}_{y}";
                 //Debug.Log("POSITION: " + RoomNumberToPosition(new Vector2Int(x, y)).x + RoomNumberToPosition(new Vector2Int(x, y)).y);
@@ -104,6 +104,28 @@ public class MazeGenerator : MonoBehaviour
     {
         DestroyRooms();
         InitializeRooms();
+    }
+
+    private void ReplaceRoom(Vector2Int roomPosition, GameObject roomPrefab)
+    {
+        bool[] connections = rooms[roomPosition.x, roomPosition.y].connections;
+        Destroy(rooms[roomPosition.x, roomPosition.y].gameObject);
+        GameObject newRoom = Instantiate(roomPrefab, RoomNumberToWorldPosition(roomPosition), Quaternion.identity);
+        rooms[roomPosition.x, roomPosition.y] = newRoom.GetComponent<MazeRoom>();
+        rooms[roomPosition.x, roomPosition.y].connections = connections;
+    }
+
+    private GameObject GenerateRandomRoom(Vector2Int position)
+    {
+        int trapRoomProbability = 20;
+        int randomNumber = Random.Range(0, 100);
+        if(randomNumber < trapRoomProbability)
+        {
+            return Instantiate(trapRoomPrefab, RoomNumberToWorldPosition(position), Quaternion.identity);
+        }
+        else {
+            return Instantiate(roomPrefab, RoomNumberToWorldPosition(position), Quaternion.identity);
+        }
     }
 
 
@@ -151,7 +173,7 @@ public class MazeGenerator : MonoBehaviour
 
                 if (neighbors.Count > 0)
                 {
-                    Vector2Int chosenNeighbor = neighbors[UnityEngine.Random.Range(0, neighbors.Count)];
+                    Vector2Int chosenNeighbor = neighbors[Random.Range(0, neighbors.Count)];
                     visited.Add(chosenNeighbor);
                     stack.Push(chosenNeighbor);
 
@@ -225,7 +247,7 @@ public class MazeGenerator : MonoBehaviour
 
         if (neighbors.Count > 0)
         {
-            Vector2Int chosenNeighbor = neighbors[UnityEngine.Random.Range(0, neighbors.Count)];
+            Vector2Int chosenNeighbor = neighbors[Random.Range(0, neighbors.Count)];
             CreateConnection(endRoomPos, chosenNeighbor);
             visited.Add(endRoomPos);
         }
@@ -263,14 +285,7 @@ public class MazeGenerator : MonoBehaviour
         }
     }
 
-    private void ReplaceRoom(Vector2Int roomPosition, GameObject roomPrefab)
-    {
-        bool[] connections = rooms[roomPosition.x, roomPosition.y].connections;
-        Destroy(rooms[roomPosition.x, roomPosition.y].gameObject);
-        GameObject newRoom = Instantiate(roomPrefab, RoomNumberToWorldPosition(roomPosition), Quaternion.identity);
-        rooms[roomPosition.x, roomPosition.y] = newRoom.GetComponent<MazeRoom>();
-        rooms[roomPosition.x, roomPosition.y].connections = connections;
-    }
+    
 
 
     /* ++++++++++++++++++++++++++++++++++++++++++++++++ ROOM LOGIC ++++++++++++++++++++++++++++++++++++++++++++++++ */

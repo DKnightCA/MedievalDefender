@@ -599,6 +599,7 @@ MonoBehaviour:
   starterRoomPrefab: {fileID: 3971666168483729994, guid: b6c00609575bc464f9b715dfa8c4b369, type: 3}
   finalRoomPrefab: {fileID: 4627331902701998552, guid: 115b444c662edf4469f4b814a4beadec, type: 3}
   optionalBossItemRoomPrefab: {fileID: 3396810760385866920, guid: 39cf92937d943284aa4f9728bfb6bc35, type: 3}
+  trapRoomPrefab: {fileID: 104228251327746820, guid: 232b08824b62633419b26ab1137da1d2, type: 3}
   roomSize: {x: 0, y: 0}
   activeRoom: {fileID: 0}
   activeRoomPosition: {x: 0, y: 0}

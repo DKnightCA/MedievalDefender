@@ -22,12 +22,12 @@ public class MazeRoom : MonoBehaviour
 
     public int enemies;
     public GameObject[] roomEnemies;
-    private GameObject[] instantiatedEnemies;
+    protected GameObject[] instantiatedEnemies;
     public GameObject roomObjects;
     private GameObject instantiatedObject;
 
     void Awake()
-    {     
+    {
         connections = new bool[4];
         for (int i = 0; i < connections.Length; i++)
         {
@@ -57,7 +57,7 @@ public class MazeRoom : MonoBehaviour
     }
 
     // The first entry of the array is the bottom left corner of the spawn area, and the second entry is the top right corner.
-    private void SpawnEnemies()
+    protected GameObject[] SpawnEnemies()
     {
         Vector2[] spawnZone = GetSpawnZone();
         Vector2 spawnPoint;
@@ -66,14 +66,18 @@ public class MazeRoom : MonoBehaviour
         for (int i = 0; i < enemies; i++)
         {
             spawnPoint = new Vector2(Random.Range(spawnZone[0].x, spawnZone[1].x), Random.Range(spawnZone[0].y, spawnZone[1].y));
-            instantiatedEnemies[i] = Instantiate(roomEnemies[0], spawnPoint, Quaternion.identity, transform);
+            int randomEnemy = Random.Range(0, roomEnemies.Length);
+            instantiatedEnemies[i] = Instantiate(roomEnemies[randomEnemy], spawnPoint, Quaternion.identity, transform);
+            Debug.Log(instantiatedEnemies[i]);
             StartCoroutine(DisableEnemyMovement(instantiatedEnemies[i]));
         }
+        return instantiatedEnemies;
     }
 
     private IEnumerator DisableEnemyMovement(GameObject enemy)
     {
         MovimientoEnemigo movimiento = enemy.GetComponent<MovimientoEnemigo>();
+     //   Debug.Log("movimienti " + movimiento);
         float originalSpeed = movimiento.moveSpeed;
         movimiento.moveSpeed = 0;
 
@@ -99,8 +103,6 @@ public class MazeRoom : MonoBehaviour
         Vector2 pointZero = new Vector2(this.transform.position.x - sizeTileX/2 +2,
                                         this.transform.position.y - sizeTileY/2 +2);
         Vector2 enemiesSpawnZone = pointZero + new Vector2(sizeTileX -5, sizeTileY -5);
-        Debug.Log("pointZero: " + pointZero);
-        Debug.Log(enemiesSpawnZone);
 
         // Adjust the spawn area of the enemies to be fair for the player.
         if (connections[0])
@@ -126,8 +128,6 @@ public class MazeRoom : MonoBehaviour
         Vector2[] result = new Vector2[2];
         result[0] = pointZero;
         result[1] = enemiesSpawnZone;
-        Debug.Log("finalPointZero: " + pointZero);
-        Debug.Log(enemiesSpawnZone);
         return result;
     }
 
@@ -152,6 +152,7 @@ public class MazeRoom : MonoBehaviour
         CreateRoomBorderTilemap();
         ConnectRoomsTilemap();
     }
+
     public void CreateFloorTilemap()
     {
         Vector2Int tilemapStart = GetTilemapStart();

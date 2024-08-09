@@ -92,5 +92,5 @@ MonoBehaviour:
   - {fileID: 6397083870827187516, guid: 39fd214f067be8043b948d51182b3dde, type: 3}
   - {fileID: 5689032216868007876, guid: 05bacb0c765503645b56b206f5bdad9d, type: 3}
   - {fileID: 1814685351795684815, guid: 8ca2ab92b12daab4c840ce3a723aa702, type: 3}
-  isActive: 1
+  isActive: 0
   timeBetweenSpawns: 1.5

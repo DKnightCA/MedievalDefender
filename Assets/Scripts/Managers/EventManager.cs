@@ -17,6 +17,8 @@ public class EventManager : MonoBehaviour
     public static event Action<MazeRoom> OnEnterRoom;
     public static event Action<MazeRoom> OnExitRoom;
 
+    public static event Action OnCountdownEnd;
+
 
     public static void EnemyDefeated(GameObject enemy)
     {
@@ -37,17 +39,14 @@ public class EventManager : MonoBehaviour
     {
         OnCameraGoLeft?.Invoke();
     }
-
     public static void CameraGoRight()
     {
         OnCameraGoRight?.Invoke();
     }
-
     public static void CameraGoUp()
     {
         OnCameraGoUp?.Invoke();
     }
-
     public static void CameraGoDown()
     {
         OnCameraGoDown?.Invoke();
@@ -61,5 +60,10 @@ public class EventManager : MonoBehaviour
     public static void ExitRoom(MazeRoom room)
     {
         OnExitRoom?.Invoke(room);
+    }
+
+    public static void CountdownEnd()
+    {
+        OnCountdownEnd?.Invoke();
     }
 }

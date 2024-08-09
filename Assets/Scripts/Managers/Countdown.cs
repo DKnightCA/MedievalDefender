@@ -35,7 +35,7 @@ public class Countdown : MonoBehaviour
         if (countdownTime <= 0)
         {
             countdownText.text = "00:00";
-            EventManager.LevelPassed();
+            EventManager.CountdownEnd();
 
         }
     }
