@@ -6,10 +6,9 @@ public class FinalRoom : MazeRoom
 {
     private Countdown countdown;
     private MonsterSpawner spawner;
-    private bool roomCleared = false;
     // Start is called before the first frame update
 
-    void Start()
+    new void Start()
     {
         base.Start();
         EventManager.OnLevelPassed += RoomCleared;
@@ -22,7 +21,7 @@ public class FinalRoom : MazeRoom
         spawner.Deactivate();
     }
     public override void EnterRoom() {
-        if (!roomCleared)
+        if (!isCleared)
         {
             CloseRoomTilemap();
             countdown.StartCountdown();
@@ -31,9 +30,9 @@ public class FinalRoom : MazeRoom
         // Start boosfight or timed fight or whatever.
     }
 
-    public void RoomCleared()
-    {   
-        roomCleared = true;
+    public new void RoomCleared()
+    {
+        base.RoomCleared();
         ConnectRoomsTilemap();
     }
 

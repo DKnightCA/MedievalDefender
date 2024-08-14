@@ -4,10 +4,9 @@ using UnityEngine;
 
 public class TrapRoom : MazeRoom
 {
-    private bool roomCleared = false;
 
     // Start is called before the first frame update
-    void Start()
+    new void Start()
     {
         base.Start();
         EventManager.OnEnemyDefeated += CheckEnemies;
@@ -15,25 +14,26 @@ public class TrapRoom : MazeRoom
 
     public override void EnterRoom()
     {
-        if (!roomCleared)
+        if (!isCleared)
         {
             CloseRoomTilemap();
-            SpawnEnemies();
+            SpawnEnemies(100);
         }
         // Start boosfight or timed fight or whatever.
     }
 
-    public void RoomCleared()
+    public new void RoomCleared()
     {
-        roomCleared = true;
+        base.RoomCleared();
         ConnectRoomsTilemap();
+        Instantiate(roomObjects, this.transform);
     }
 
     public override void ExitRoom() { }
 
     private void CheckEnemies(GameObject defeatedEnemy)
     {
-        if (roomCleared || instantiatedEnemies == null)
+        if (isCleared || instantiatedEnemies == null)
         {
             return;
         }

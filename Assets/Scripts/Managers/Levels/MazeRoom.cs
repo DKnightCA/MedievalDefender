@@ -20,11 +20,16 @@ public class MazeRoom : MonoBehaviour
     // Which borders of the room are doors. In order, connection points are: North, South, West, East.
     public bool[] connections;
 
-    public int enemies;
-    public GameObject[] roomEnemies;
-    protected GameObject[] instantiatedEnemies;
+    public int enemies; // Max number of enemies that can spawn in this room
+    public GameObject[] roomEnemies; // Type of enemies that can spawn in this room
+    protected GameObject[] instantiatedEnemies; // Array to keep track of the spawned enemies
+    
+    // Not in use currently
     public GameObject roomObjects;
     private GameObject instantiatedObject;
+    
+
+    protected bool isCleared = false; // Indicates if the room has been already cleared
 
     void Awake()
     {
@@ -48,7 +53,7 @@ public class MazeRoom : MonoBehaviour
     // Initializes the elements of the room when the player enters.
     public virtual void EnterRoom()
     {
-        SpawnEnemies();
+        SpawnEnemies(40);
     }
 
     public virtual void ExitRoom()
@@ -56,22 +61,29 @@ public class MazeRoom : MonoBehaviour
         DespawnEnemies();
     }
 
-    // The first entry of the array is the bottom left corner of the spawn area, and the second entry is the top right corner.
-    protected GameObject[] SpawnEnemies()
+    protected GameObject[] SpawnEnemies(int spawnChance)
     {
         Vector2[] spawnZone = GetSpawnZone();
         Vector2 spawnPoint;
         instantiatedEnemies = new GameObject[enemies];
 
+        // Gets a spawn point and a random enemy to instantiate. Every enemy has a chance to spawn or not.
         for (int i = 0; i < enemies; i++)
         {
             spawnPoint = new Vector2(Random.Range(spawnZone[0].x, spawnZone[1].x), Random.Range(spawnZone[0].y, spawnZone[1].y));
             int randomEnemy = Random.Range(0, roomEnemies.Length);
-            instantiatedEnemies[i] = Instantiate(roomEnemies[randomEnemy], spawnPoint, Quaternion.identity, transform);
-            Debug.Log(instantiatedEnemies[i]);
-            StartCoroutine(DisableEnemyMovement(instantiatedEnemies[i]));
+            if (Random.Range(0, 100) < spawnChance)
+            {
+                instantiatedEnemies[i] = SpawnEnemy(roomEnemies[randomEnemy], spawnPoint); 
+                StartCoroutine(DisableEnemyMovement(instantiatedEnemies[i]));
+            }
         }
         return instantiatedEnemies;
+    }
+
+    protected GameObject SpawnEnemy(GameObject enemy, Vector2 spawnPoint)
+    {
+        return Instantiate(enemy, spawnPoint, Quaternion.identity, transform);
     }
 
     private IEnumerator DisableEnemyMovement(GameObject enemy)
@@ -131,6 +143,11 @@ public class MazeRoom : MonoBehaviour
         return result;
     }
 
+    public void RoomCleared()
+    {
+        isCleared = true;
+    }
+
     public bool IsDeadEnd()
     {
         int connectionCount = 0;
@@ -145,6 +162,7 @@ public class MazeRoom : MonoBehaviour
         return false;
     }
 
+    // +++++++++++++++++++++++++++ TILEMAP +++++++++++++++++++++++++++++++++++
     public void CreateTilemap()
     {
         CreateFloorTilemap();

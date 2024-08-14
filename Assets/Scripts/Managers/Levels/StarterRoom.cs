@@ -5,7 +5,7 @@ using UnityEngine;
 public class StarterRoom : MazeRoom
 {
 
-    void Start()
+    new void Start()
     {
         base.Start();
         Instantiate(roomObjects, this.transform);
